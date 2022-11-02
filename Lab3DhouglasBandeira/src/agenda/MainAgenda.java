@@ -8,6 +8,7 @@ import java.util.Scanner;
  * Interface com menus texto para manipular uma agenda de contatos.
  * 
  * @author nazarenoandrade
+ * @author Dhouglas Bandeira
  *
  */
 public class MainAgenda {
@@ -87,7 +88,7 @@ public class MainAgenda {
 	 */
 	private static void listaContatos(Agenda agenda) {
 		System.out.println("\nLista de contatos: ");
-		String[] contatos = agenda.getContatos();
+		Contato[] contatos = agenda.getContatos();
 		for (int i = 0; i < contatos.length; i++) {
 			if (contatos[i] != null) {
 				System.out.println(formataContato(i, contatos[i]));
@@ -104,8 +105,12 @@ public class MainAgenda {
 	private static void exibeContato(Agenda agenda, Scanner scanner) {
 		System.out.print("\nQual contato> ");
 		int posicao = scanner.nextInt();
-		String contato = agenda.getContato(posicao);
-		System.out.println("Dados do contato:\n" + contato);
+		Contato contato = agenda.getContato(posicao);
+		System.out.println();
+		System.out.println(contato.pegaNome() +
+				" " + contato.pegaSobrenome() +
+				"\n" + contato.pegaTelefone()
+				);
 	}
 
 	/**
@@ -115,8 +120,9 @@ public class MainAgenda {
 	 * @param contato O contato a ser impresso.
 	 * @return A String formatada.
 	 */
-	private static String formataContato(int posicao, String contato) {
-		return posicao + " - " + contato;
+	private static String formataContato(int posicao, Contato contato) {
+		return posicao + " - " + contato.pegaNome() +
+				" " + contato.pegaSobrenome();
 	}
 
 	/**
@@ -128,12 +134,32 @@ public class MainAgenda {
 	private static void cadastraContato(Agenda agenda, Scanner scanner) {
 		System.out.print("\nPosição na agenda> ");
 		int posicao = scanner.nextInt();
+		if (posicao < 1 || posicao > 100) {
+			System.out.println("POSIÇÃO INVÁLIDA");
+			return;
+		}
+		
 		System.out.print("\nNome> ");
 		String nome = scanner.next();
+		if(nome.isBlank()) {
+			System.out.println("CONTATO INVALIDO");
+			return;
+		}
+		
 		System.out.print("\nSobrenome> ");
 		String sobrenome = scanner.next();
+		if (!agenda.contatoJaExiste(nome, sobrenome)) {
+			System.out.println("CONTATO JA CADASTRADO");
+			return;
+		}
+		
 		System.out.print("\nTelefone> ");
-		String telefone = scanner.next();
+		String telefone = scanner.nextLine();
+		if(telefone.equals("")) {
+			System.out.println("CONTATO INVALIDO");
+			return;
+		}
+		
 		agenda.cadastraContato(posicao, nome, sobrenome, telefone);
 	}
 
