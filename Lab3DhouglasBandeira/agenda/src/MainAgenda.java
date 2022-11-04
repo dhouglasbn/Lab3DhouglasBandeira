@@ -1,4 +1,4 @@
-package agenda;
+package src;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -49,10 +49,10 @@ public class MainAgenda {
 						"(C)adastrar Contato\n" + 
 						"(L)istar Contatos\n" + 
 						"(E)xibir Contato\n" + 
-						"(S)air\n" +
 						"(F)avoritos\n" +
 						"(A)dicionar Favorito\n" +
 						"(R)emover Favorito\n" +
+						"(S)air\n" +
 
 						"\n" + 
 						"Opção> ");
@@ -115,13 +115,7 @@ public class MainAgenda {
 	private static void exibeContato(Agenda agenda, Scanner scanner) {
 		System.out.print("\nQual contato> ");
 		int posicao = scanner.nextInt();
-		if (agenda.contatoIncadastravel(posicao)) {
-			System.out.println("POSIÇÃO INVÁLIDA");
-			return;
-		}
-		Contato contato = agenda.getContato(posicao);
-		System.out.println();
-		System.out.println(contato.toString());
+		System.out.println(agenda.exibeContato(posicao));
 	}
 
 	/**
@@ -133,31 +127,12 @@ public class MainAgenda {
 	private static void cadastraContato(Agenda agenda, Scanner scanner) {
 		System.out.println("\nPosição na agenda> ");
 		int posicao = scanner.nextInt();
-		if (agenda.contatoIncadastravel(posicao)) {
-			System.out.println("POSIÇÃO INVÁLIDA");
-			return;
-		}
-		
 		System.out.println("\nNome> ");
 		String nome = scanner.next();
-		if(nome.isEmpty()) {
-			System.out.println("CONTATO INVALIDO");
-			return;
-		}
-		
 		System.out.print("\nSobrenome> ");
 		String sobrenome = scanner.next();
-		if (agenda.contatoJaExiste(nome, sobrenome)) {
-			System.out.println("CONTATO JA CADASTRADO");
-			return;
-		}
-		
 		System.out.print("\nTelefone> ");
 		String telefone = scanner.next();
-		if(telefone.isEmpty()) {
-			System.out.println("CONTATO INVALIDO");
-			return;
-		}
 		
 		agenda.cadastraContato(posicao, nome, sobrenome, telefone);
 	}
@@ -170,13 +145,13 @@ public class MainAgenda {
 	private static void adicionaFavorito(Agenda agenda, Scanner scanner) {
 		System.out.println("Contato> \n");
 		int contato = scanner.nextInt();
-		if (agenda.contatoIncadastravel(contato)) {
+		if (agenda.posicaoIncadastravel(contato)) {
 			System.out.println("POSIÇÃO INVÁLIDA");
 			return;
 		}
 		System.out.println("Posicao> \n");
 		int posicao = scanner.nextInt();
-		if (agenda.contatoIncadastravel(posicao)) {
+		if (agenda.posicaoIncadastravel(posicao)) {
 			System.out.println("POSIÇÃO INVÁLIDA");
 			return;
 		}

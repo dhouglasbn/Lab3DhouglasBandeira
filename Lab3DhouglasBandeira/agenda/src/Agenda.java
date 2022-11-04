@@ -1,4 +1,4 @@
-package agenda;
+package src;
 
 /**
  * Uma agenda que mantém uma lista de contatos com posições. Podem existir 100 contatos. 
@@ -49,8 +49,11 @@ public class Agenda {
 	 * @param posicao Posição do contato na agenda.
 	 * @return Dados do contato. Null se não há contato na posição.
 	 */
-	public Contato getContato(int posicao) {
-		return contatos[posicao];
+	public String exibeContato(int posicao) {
+		if (this.posicaoIncadastravel(posicao)) {
+			return "";
+		}
+		return contatos[posicao].toString();
 	}
 
 	/**
@@ -61,6 +64,22 @@ public class Agenda {
 	 * @param telefone Telefone do contato.
 	 */
 	public void cadastraContato(int posicao, String nome, String sobrenome, String telefone) {
+		if (this.posicaoIncadastravel(posicao)) {
+			System.out.println("POSIÇÃO INVÁLIDA");
+			return;
+		}
+		if (this.contatoJaExiste(nome, sobrenome)) {
+			System.out.println("CONTATO JA CADASTRADO");
+			return;
+		}
+		if (nome.isBlank()) {
+			System.out.println("CONTATO INVALIDO");
+			return;
+		}
+		if (telefone.isBlank()) {
+			System.out.println("CONTATO INVALIDO");
+			return;
+		}
 		
 		this.contatos[posicao] = new Contato(nome, sobrenome, telefone);
 	}
@@ -88,8 +107,8 @@ public class Agenda {
 	 * @param posicao
 	 * @return pode cadastrar - true, não pode - false
 	 */
-	public boolean contatoIncadastravel(int posicao) {
-		if ((posicao - 1) < 0 || (posicao - 1) > TAMANHO_AGENDA) {
+	public boolean posicaoIncadastravel(int posicao) {
+		if (posicao < 1 || posicao > TAMANHO_AGENDA) {
 				return true;
 		}
 		return false;
@@ -102,13 +121,16 @@ public class Agenda {
 	 * @return pode cadastrar - true, não pode - false
 	 */
 	public boolean favoritoIncadastravel(int posicao) {
-		if ((posicao - 1) < 0 || (posicao - 1) > TAMANHO_FAVORITO) {
+		if (posicao < 0 || posicao > TAMANHO_FAVORITO) {
 				return true;
 		}
 		return false;
 	}
 	
 	public void adicionaFavorito(int contato, int posicao) {
+		if (this.favoritoIncadastravel(posicao)) {
+			return;
+		}
 		if (contatoJaFavoritado(contato)) {
 			return;
 		}
@@ -123,6 +145,9 @@ public class Agenda {
 	}
 	
 	public void removeFavorito(int posicao) {
+		if (this.favoritoIncadastravel(posicao)) {
+			return;
+		}
 		if (this.favoritos[posicao] == null) {
 			return;
 		}
