@@ -128,11 +128,12 @@ public class MainAgenda {
 		System.out.println("\nPosição na agenda> ");
 		int posicao = scanner.nextInt();
 		System.out.println("\nNome> ");
-		String nome = scanner.next();
+		scanner.nextLine();
+		String nome = scanner.nextLine();
 		System.out.print("\nSobrenome> ");
-		String sobrenome = scanner.next();
+		String sobrenome = scanner.nextLine();
 		System.out.print("\nTelefone> ");
-		String telefone = scanner.next();
+		String telefone = scanner.nextLine();
 		
 		agenda.cadastraContato(posicao, nome, sobrenome, telefone);
 	}
@@ -145,22 +146,8 @@ public class MainAgenda {
 	private static void adicionaFavorito(Agenda agenda, Scanner scanner) {
 		System.out.println("Contato> \n");
 		int contato = scanner.nextInt();
-		if (agenda.posicaoIncadastravel(contato)) {
-			System.out.println("POSIÇÃO INVÁLIDA");
-			return;
-		}
 		System.out.println("Posicao> \n");
 		int posicao = scanner.nextInt();
-		if (agenda.posicaoIncadastravel(posicao)) {
-			System.out.println("POSIÇÃO INVÁLIDA");
-			return;
-		}
-		
-		if (agenda.contatoJaFavoritado(contato)) {
-			System.out.println("CONTATO JÁ É FAVORITO");
-		} else {
-			System.out.println("CONTATO FAVORITADO NA POSIÇÃO " + posicao + "!\n");			
-		}
 		agenda.adicionaFavorito(contato, posicao);
 	}
 	

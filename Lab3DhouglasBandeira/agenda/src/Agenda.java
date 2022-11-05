@@ -9,9 +9,10 @@ package src;
  */
 public class Agenda {
 	
-	private static final int TAMANHO_AGENDA = 100;
+	// Por algum motivo os Arrays estão começando a contagem em 1.
+	private static final int TAMANHO_AGENDA = 101;
 	
-	private static final int TAMANHO_FAVORITO = 10;
+	private static final int TAMANHO_FAVORITO = 11;
 	
 	private Contato[] contatos;
 	
@@ -32,7 +33,15 @@ public class Agenda {
 	public Contato[] getContatos() {
 		return this.contatos.clone();
 	}
+	
+	public Contato getContato(int posicao) {
+		return this.contatos[posicao];
+	}
 
+	/**
+	 * Retorna uma lista formatada dos contatos.
+	 * @return lista com nomes e sobrenomes.
+	 */
 	public String pegaListaContatos() {
 		String retorno = "";
 		for (int index = 1; index < this.contatos.length; index++) {
@@ -53,6 +62,9 @@ public class Agenda {
 		if (this.posicaoIncadastravel(posicao)) {
 			return "";
 		}
+		if (this.contatos[posicao] == null) {
+			return "";
+		}
 		return contatos[posicao].toString();
 	}
 
@@ -63,25 +75,26 @@ public class Agenda {
 	 * @param sobrenome Sobrenome do contato.
 	 * @param telefone Telefone do contato.
 	 */
-	public void cadastraContato(int posicao, String nome, String sobrenome, String telefone) {
+	public boolean cadastraContato(int posicao, String nome, String sobrenome, String telefone) {
 		if (this.posicaoIncadastravel(posicao)) {
 			System.out.println("POSIÇÃO INVÁLIDA");
-			return;
+			return false;
 		}
-		if (this.contatoJaExiste(nome, sobrenome)) {
+		if (this.contatoJaCadastrado(nome, sobrenome)) {
 			System.out.println("CONTATO JA CADASTRADO");
-			return;
+			return false;
 		}
 		if (nome.isBlank()) {
 			System.out.println("CONTATO INVALIDO");
-			return;
+			return false;
 		}
 		if (telefone.isBlank()) {
 			System.out.println("CONTATO INVALIDO");
-			return;
+			return false;
 		}
 		
 		this.contatos[posicao] = new Contato(nome, sobrenome, telefone);
+		return true;
 	}
 	
 	/**
@@ -91,7 +104,7 @@ public class Agenda {
 	 * @param sobrenome
 	 * @return se ja existir o nome e sobrenome - true, else - false
 	 */
-	public boolean contatoJaExiste(String nome, String sobrenome) {
+	public boolean contatoJaCadastrado(String nome, String sobrenome) {
 		Contato oContato = new Contato(nome, sobrenome, "");
 		for (Contato contato: this.contatos) {
 			if (oContato.equals(contato)) {
@@ -100,39 +113,25 @@ public class Agenda {
 		}
 		return false;
 	}
-
-	/**
-	 * Verifica se a posição esta dentro do intervalo de numeros cadastráveis.
-	 * 
-	 * @param posicao
-	 * @return pode cadastrar - true, não pode - false
-	 */
-	public boolean posicaoIncadastravel(int posicao) {
-		if (posicao < 1 || posicao > TAMANHO_AGENDA) {
-				return true;
-		}
-		return false;
-	}
 	
 	/**
-	 * Verifica se a posição esta dentro do intervalo de favoritos cadastráveis.
+	 * Adiciona um contato aos favoritos.
 	 * 
+	 * @param contato
 	 * @param posicao
-	 * @return pode cadastrar - true, não pode - false
 	 */
-	public boolean favoritoIncadastravel(int posicao) {
-		if (posicao < 0 || posicao > TAMANHO_FAVORITO) {
-				return true;
-		}
-		return false;
-	}
-	
-	public void adicionaFavorito(int contato, int posicao) {
+	public boolean adicionaFavorito(int contato, int posicao) {
 		if (this.favoritoIncadastravel(posicao)) {
-			return;
+			System.out.println("POSIÇÃO INVÁLIDA");
+			return false;
+		}
+		if (this.posicaoIncadastravel(contato)) {
+			System.out.println("POSIÇÃO INVÁLIDA");
+			return false;
 		}
 		if (contatoJaFavoritado(contato)) {
-			return;
+			System.out.println("CONTATO JÁ É FAVORITO");
+			return false;
 		}
 		
 		this.contatos[contato].setFavorito(true);
@@ -142,19 +141,31 @@ public class Agenda {
 		}
 		
 		this.favoritos[posicao] = this.contatos[contato];
+		System.out.println("CONTATO FAVORITADO NA POSIÇÃO " + posicao + "!\n");
+		return true;
 	}
 	
-	public void removeFavorito(int posicao) {
+	/**
+	 * Remove um contato dos favoritos.
+	 * 
+	 * @param posicao
+	 */
+	public boolean removeFavorito(int posicao) {
 		if (this.favoritoIncadastravel(posicao)) {
-			return;
+			return false;
 		}
 		if (this.favoritos[posicao] == null) {
-			return;
+			return false;
 		}
 		this.favoritos[posicao].setFavorito(false);
 		this.favoritos[posicao] = null;
+		return true;
 	}
 	
+	/**
+	 * Retorna uma lista dos contatos favoritos formatada.
+	 * @return lista com nomes e sobrenomes.
+	 */
 	public String pegaFavoritosFormatado() {
 		String retorno = "";
 		for (int index = 1; index < this.favoritos.length; index++) {
@@ -166,6 +177,12 @@ public class Agenda {
 		return retorno;
 	}
 	
+	/**
+	 * Verifica se o contato já está na lista de favoritos.
+	 * 
+	 * @param posicao
+	 * @return true - contato já está nos favoritos, false - não está.
+	 */
 	public boolean contatoJaFavoritado(int posicao) {
 		for (int index = 1; index < TAMANHO_FAVORITO; index++) {
 			if (this.favoritos[index] != null) {
@@ -173,6 +190,32 @@ public class Agenda {
 					return true;
 				}				
 			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Verifica se a posição esta dentro do intervalo de numeros cadastráveis.
+	 * 
+	 * @param posicao
+	 * @return pode cadastrar - true, não pode - false
+	 */
+	private boolean posicaoIncadastravel(int posicao) {
+		if (posicao < 1 || posicao >= TAMANHO_AGENDA) {
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Verifica se a posição esta dentro do intervalo de favoritos cadastráveis.
+	 * 
+	 * @param posicao
+	 * @return pode cadastrar - true, não pode - false
+	 */
+	private boolean favoritoIncadastravel(int posicao) {
+		if (posicao < 1 || posicao >= TAMANHO_FAVORITO) {
+				return true;
 		}
 		return false;
 	}
